@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  
+  <ul id="chat-box">
+
+    
+      ${msgs.map((message) =>  `
+
+        <li>
+          <p style="margin:5px">${message.message}</p>
+        </li>
+      
+      `).join(' ')}
+
+  </ul>
+
+
+  <div id="chat-div">
+    <input id="chat-text" type="text" />
+    <button id="chat-send" >Send</button>
+  </div>
+<script>
+  const connection = new WebSocket("ws://192.168.0.128:3002/chat")
+  document.getElementById("chat-send").addEventListener("click", (e)=>{
+    e.preventDefault();
+    const message = document.getElementById("chat-text").value;
+    console.log(message)
+    connection.send(JSON.stringify({message, 
+      // me: ${me}
+  }));
+  })
+
+  connection.onmessage = (e) => {
+    const {message} = JSON.parse(JSON.parse(e.data))
+    const ul = document.getElementById('chat-box')
+    const li = document.createElement('li')
+    li.innerHTML = '<p style="margin:5px">'+message+'</p>'
+    ul.appendChild(li)
+    console.log(message);
+  };
+</script>
+
+</body>
+</html>
